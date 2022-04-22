@@ -4,7 +4,8 @@ A Simple Architecture for Back Propagation Neural Networks
 
 ## 目前已经实现的功能
 1. 能实现任意规模的前馈神经网络
-2. ...
+2. 使用标准梯度下降法更新权重
+3. ...
 
 ## 计划实现的功能
 1. 优化器
