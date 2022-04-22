@@ -9,3 +9,6 @@ A Simple Architecture for Back Propagation Neural Networks
 ## 计划实现的功能
 1. 优化器
 2. CNN卷积神经网络框架
+
+## Note
+运行此文件前需要下载[Eigen](https://eigen.tuxfamily.org/)并将其添加至CMake文件中
