@@ -1,44 +1,43 @@
 #include "Init.h"
 
-int Init::calculateCorrectFan(Tensor& t, std::string mode){
+#include <utility>
+
+unsigned int Init::calculateCorrectFan(CTensor& t, const std::string& mode){
 	if (mode != "fanIn" && mode != "fanOut") {
 		throw(std::exception("mode只设置为fanIn或fanOut"));
 	}
-	int *fan = calculateFanInAndFanOut(t);
-	int temp = mode == "fanIn" ? fan[0] : fan[1];
+    unsigned int *fan = calculateFanInAndFanOut(t);
+    unsigned int temp = mode == "fanIn" ? fan[0] : fan[1];
 	delete fan;
 	return temp;
 }
 
-int* Init::calculateFanInAndFanOut(Tensor& t){
-	int* a = new int[2];
-	a[0] = t.getData().rows();
-	a[1] = t.getData().cols();
+unsigned int* Init::calculateFanInAndFanOut(CTensor& t){
+    unsigned int* a = new unsigned int[2];
+	a[0] = t.getShape()[0];
+	a[1] = t.getShape()[1];
 	return a;
 }
 
-void Init::kaimingUniform(Tensor& t, double a, std::string mode, std::string nonlinearity){
-	int fan = calculateCorrectFan(t, mode);
-	double gain = calculateGain(nonlinearity, a);
+void Init::kaimingUniform(CTensor& t, double a, const std::string& mode, const std::string& nonlinearity){
+    unsigned int fan = calculateCorrectFan(t, mode);
+	double gain = calculateGain(nonlinearity, true, a);
 	double std = gain / sqrt(fan);
 	double bound = sqrt(3.0) * std;
 	uniform(t, -bound, bound);
 }
 
-void Init::uniform(Tensor& t, double a, double b){
-	std::default_random_engine seed(time(NULL));
+void Init::uniform(CTensor& t, double a, double b){
+    std::random_device rd;
+    std::default_random_engine seed{rd()};
 	std::uniform_real_distribution<double> randomUniform(a, b);
 
-	Eigen::MatrixXd data = t.getData();
-	for (int i = 0; i < data.rows(); i++) {
-		for (int j = 0; j < data.cols(); j++) {
-			data.row(i)[j] = randomUniform(seed);
-		}
+	for (unsigned long i = 0; i < t.getSize(); i++) {
+			t[i] = randomUniform(seed);
 	}
-	t.setData(data);
 }
 
-double Init::calculateGain(std::string nonlinearity, bool flag, double param){
+double Init::calculateGain(const std::string& nonlinearity, bool flag, double param){
 	if (nonlinearity == "sigmoid") {
 		return 1.0;
 	}
@@ -62,5 +61,4 @@ double Init::calculateGain(std::string nonlinearity, bool flag, double param){
 		return sqrt(2.0 / (1 + pow(negativeSlope, 2)));
 	}
 	throw(std::exception("nonlinearity 不合法"));
-	return 0.0;
 }

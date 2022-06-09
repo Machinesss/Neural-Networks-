@@ -1,9 +1,9 @@
 #include "NeuralNetworks.h"
 
-Tensor* NeuralNetworks::operator()(Tensor& x){
+CTensor* NeuralNetworks::operator()(CTensor& x){
 	return forward(x);
 }
 
-std::vector<Module::Base*> NeuralNetworks::getMember() const{
-	return member;
-}
+//std::vector<Module::Base *> NeuralNetworks::getMember(){
+//	return member;
+//}

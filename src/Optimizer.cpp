@@ -28,29 +28,29 @@ Optimizer::SGD::~SGD(){
 }
 
 void Optimizer::SGD::step(){
-	for (int i = 0; i < nnParm.size(); i++) {
-		std::vector<Tensor*> moduleParm = nnParm[i]->getParm();
-		for (int j = 0; j < moduleParm.size(); j++) {
-			Eigen::MatrixXd dp = moduleParm[j]->getGrad();
+	for (unsigned int i = 0; i < nnParm.size(); i++) {
+		std::vector<CTensor*> moduleParm = nnParm[i]->getParm();
+		for (unsigned int j = 0; j < moduleParm.size(); j++) {
+			DoubleTensor dp = moduleParm[j]->getGrad();
 			if (weightDecay != 0) {
 				dp += moduleParm[j]->getData() * weightDecay;
 			}
 			if (momentum != 0) {
 				if (state.find(moduleParm[j]) == state.end()) {
-					state[moduleParm[j]] = dp;
+                    state.insert(std::pair<CTensor*, DoubleTensor>(moduleParm[j], DoubleTensor(dp)));
 				}
 				else {
-					state[moduleParm[j]] = state[moduleParm[j]] * momentum + dp * (1 - dampening);
+                    state.find(moduleParm[j])->second = state.find(moduleParm[j])->second * momentum + dp * (1 - dampening);
 				}
 				if (nesterov) {
-					dp += state[moduleParm[j]] * momentum;
+					dp += state.find(moduleParm[j])->second * momentum;
 				}
 				else{
-					dp = state[moduleParm[j]];
+					dp = state.find(moduleParm[j])->second;
 				}
 			}
-			dp = -learnRate * dp;
-			moduleParm[j]->setData(moduleParm[j]->getData() + dp);
+			dp *= -learnRate;
+            moduleParm[j]->operator=(moduleParm[j]->getData() + dp);
 		}
 	}
 }

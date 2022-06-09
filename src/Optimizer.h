@@ -2,7 +2,6 @@
 
 #include "Module.h"
 #include <map>
-#include <Eigen/Dense>
 
 
 namespace Optimizer {
@@ -12,7 +11,7 @@ namespace Optimizer {
         std::vector<Module::Base*> nnParm;
 
     public:
-        Base(std::vector<Module::Base*> &parm, double lr = 1e-3);
+        explicit Base(std::vector<Module::Base*> &parm, double lr = 1e-3);
         virtual ~Base() = default;
 
         //void zeroGrad();
@@ -25,11 +24,11 @@ namespace Optimizer {
         double dampening;
         double weightDecay;
         bool nesterov;
-        std::map<Tensor*, Eigen::MatrixXd> state;
+        std::map<CTensor*, DoubleTensor> state;
 
     public:
-        SGD(std::vector<Module::Base*>& parm, double lr = 1e-3, double momentum = 0, double dampening = 0, double weightDecay = 0, bool nesterov = false);
-        ~SGD();
+        explicit SGD(std::vector<Module::Base*>& parm, double lr = 1e-3, double momentum = 0, double dampening = 0, double weightDecay = 0, bool nesterov = false);
+        ~SGD() override;
         void step() override;
     };
 

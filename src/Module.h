@@ -1,24 +1,21 @@
 #pragma once
-#include "Tensor.h"
+#include "CTensor.h"
 #include <vector>
-#include <Eigen/Dense>
 #include "Operation.h"
 #include "Init.h"
 
 namespace Module{
     class Base {
     protected:
-        //Tensor output;
-        //Tensor input;
-        std::vector<Tensor*> parm;
+        std::vector<CTensor*> parm;
 
     public:
         virtual ~Base() = default;
     
-        virtual Tensor* forward(Tensor& x) = 0;
-        std::vector<Tensor*> getParm();
+        virtual CTensor* forward(CTensor& x) = 0;
+        std::vector<CTensor*> getParm();
 
-        Tensor* operator()(Tensor& x);
+        CTensor* operator()(CTensor& x);
     };
 
     class Linear :public Module::Base {
@@ -29,8 +26,8 @@ namespace Module{
 
     public:
         Linear(unsigned int inputFeature, unsigned int outputFeature, bool needBias = true);
-        Tensor* forward(Tensor& x) override;
-        void setWeight(Eigen::MatrixXd data);
-        void setBias(Eigen::MatrixXd data);
+        CTensor* forward(CTensor& x) override;
+        void setWeight(CTensor &data);
+        void setBias(CTensor &data);
     };
 }

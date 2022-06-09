@@ -1,18 +1,16 @@
 #pragma once
 #include <vector>
-#include <Eigen/Dense>
 #include "Module.h"
-#include "Tensor.h"
+#include "CTensor.h"
 
 class NeuralNetworks{
-protected:
-	std::vector<Module::Base*> member;
-
 public:
+    std::vector<Module::Base*> member;
+
 	virtual ~NeuralNetworks() = default;
 
-	virtual Tensor* forward(Tensor& x) = 0;
-	Tensor* operator()(Tensor& x);
+	virtual CTensor* forward(CTensor& x) = 0;
+    CTensor* operator()(CTensor& x);
 
-	std::vector<Module::Base*> getMember() const;
+//	std::vector<Module::Base *> getMember();
 };
